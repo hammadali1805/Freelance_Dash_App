@@ -7,7 +7,7 @@ import plotly.express as px
 
 # Use the Dash Bootstrap Components theme
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-server = app.serve
+server = app.server
 
 # Incorporate data
 data_all_years = pd.read_excel('datasheets.xlsx', sheet_name="India_SA_Implants_Data")
