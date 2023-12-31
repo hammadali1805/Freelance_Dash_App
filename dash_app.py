@@ -50,8 +50,8 @@ app.layout = html.Div([
         ], className='col-md-4'),
     ], className='row'),
 
-    dcc.Graph(figure={}, id='product_graph'),
-    dcc.Graph(figure={}, id='patient_graph'),
+    dcc.Graph(figure={}, id='product_graph', config={"displayModeBar": False}),
+    dcc.Graph(figure={}, id='patient_graph', config={"displayModeBar": False}),
 ], className='container-fluid')
 
 @callback(
