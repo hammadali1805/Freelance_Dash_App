@@ -92,6 +92,9 @@ def update_graph(region_chosen, year_chosen, tenure_chosen):
                   title=f'Patient Type Analysis {tenure_chosen} {year_chosen} {region_chosen}',
                   labels={'Values': "Key Product", 'Count': 'Frequency'},
                   hover_data=['Values'])
+        
+    fig1.update_layout(annotations=[dict(text="HAMMAD ALI", showarrow=False, x=1, y=1, font={"size": 50})])
+    fig2.update_layout(annotations=[dict(text="HAMMAD ALI", showarrow=False, x=0.5, y=0.5, font={"size": 50})])
 
     fig = [fig1, fig2]
     return fig
