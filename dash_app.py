@@ -80,7 +80,7 @@ def update_graph(region_chosen, year_chosen, tenure_chosen):
     fig1 = px.bar(key_product_frequency_df,
                   x='Values',
                   y='Count',
-                  title=f'{tenure_chosen} {year_chosen}',
+                  title=f'Key Product Analysis{tenure_chosen} {year_chosen}',
                   labels={'Values': "Key Product", 'Count': 'Frequency'},
                   text_auto=True)
 
@@ -89,7 +89,7 @@ def update_graph(region_chosen, year_chosen, tenure_chosen):
     fig2 = px.pie(patient_type_frequency_df,
                   names='Values',
                   values='Count',
-                  title=f'{tenure_chosen} {year_chosen}',
+                  title=f'Patient Type Analysis {tenure_chosen} {year_chosen}',
                   labels={'Values': "Key Product", 'Count': 'Frequency'},
                   hover_data=['Values'])
 
