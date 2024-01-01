@@ -102,20 +102,27 @@ app.layout = html.Div([
         ], className='col-md-4'),
     ], className='row'),
 
-    html.Div([
-        # First Graph in the same row
-        dcc.Graph(figure={}, id='sales_graph_anually'),
-        
-        # Second Graph in the same row
-        dcc.Graph(figure={}, id='sales_graph_quarterly'),
-    ], className='row'),
-
-    # Separate Row for other Graphs
-    html.Div([
-        dcc.Graph(figure={}, id='product_graph'),
-        dcc.Graph(figure={}, id='patient_graph'),
-    ], className='row'),
-], className='container-fluid')
+        dcc.Graph(figure={}, id='sales_graph_anually', config={'toImageButtonOptions': {
+    'filename': 'custom_image',
+    'height': 500,
+    'width': 700,
+  }}),
+        dcc.Graph(figure={}, id='sales_graph_quarterly', config={'toImageButtonOptions': {
+    'filename': 'custom_image',
+    'height': 500,
+    'width': 700,
+  }}),
+        dcc.Graph(figure={}, id='product_graph', config={'toImageButtonOptions': {
+    'filename': 'custom_image',
+    'height': 500,
+    'width': 700,
+  }}),
+        dcc.Graph(figure={}, id='patient_graph', config={'toImageButtonOptions': {
+    'filename': 'custom_image',
+    'height': 500,
+    'width': 700,
+  }}),
+])
 
 
 
@@ -167,7 +174,6 @@ def update_graph(region_chosen, year_chosen, tenure_chosen):
                   labels={'Values': "Key Product", 'Count': 'Frequency'},
                   width=700,
                   hover_data=['Values'])
-
 
 
     fig = [fig1, fig2, fig3, fig4]
