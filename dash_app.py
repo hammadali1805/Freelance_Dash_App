@@ -181,4 +181,4 @@ def update_graph(region_chosen, year_chosen, tenure_chosen):
     return fig
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server()
