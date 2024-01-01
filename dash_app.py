@@ -31,8 +31,63 @@ tenures = {
     "Fourth Quarter": [10, 11, 12],
 }
 
+def count_total_sales_anually(data):    
+    # Extracting the year from 'Implant Date'
+    data['Year'] = data['Implant Date'].dt.year
+    
+
+    total_sales_anually =  pd.DataFrame({'Year': data["Year"].value_counts().index.astype(int).astype(str), 'Sales': data["Year"].value_counts().values})
+    
+    return total_sales_anually.sort_values(by=['Year'])
+
+def graph_total_sales_anually(data, region_chosen):
+
+    fig = px.bar(data,
+                  x='Year',
+                  y='Sales',
+                  title=f'Key Product Anual Sales Analysis {region_chosen}',
+                  text_auto=True,
+                  width=700)
+    
+    fig.update_layout(annotations=[dict(text="HAMMAD ALI", showarrow=False, x=1, y=1, font={"size": 50})])
+
+    return fig
+
+def count_total_sales_quarterly(df):
+    # Convert 'Implant Date' to datetime format
+    df['Implant Date'] = pd.to_datetime(df['Implant Date'], format='%d/%m/%Y')
+
+    # Extract Year and Quarter from 'Implant Date'
+    df['Year'] = df['Implant Date'].dt.year
+    df['Quarter'] = df['Implant Date'].dt.quarter
+
+    # Create a pivot table to get the count of rows for each quarter of every year
+    pivot_table = pd.pivot_table(df, values='Account Name', index=['Year', 'Quarter'], aggfunc='count', fill_value=0).reset_index()
+    pivot_table.rename(columns={'Account Name': 'Sales'}, inplace=True)
+
+    pivot_table['Year'] = pivot_table['Year'].astype(int).astype(str)
+    pivot_table['Quarter'] = pivot_table['Quarter'].astype(int).astype(str)
+
+    return pivot_table.sort_values(by=['Year'])
+
+
+def graph_total_sales_quarterly(data, region_chosen):
+
+    fig = px.bar(data,
+                  x='Year',
+                  y='Sales',
+                  color="Quarter",
+                  category_orders={'Quarter': ["1", "2", "3", "4"]},
+                  title=f'Key Product Quarterly Sales Analysis {region_chosen}',
+                  text_auto=True,
+                  width=700)
+    
+    fig.update_layout(barmode="group", annotations=[dict(text="HAMMAD ALI", showarrow=False, x=1, y=1, font={"size": 50})])
+
+    return fig
+
 # App layout using Bootstrap components
-app.layout = html.Div([
+app.layout = html.Div([    
     html.Div([
         html.Div([
             html.H3(children='Select Region'),
@@ -50,11 +105,26 @@ app.layout = html.Div([
         ], className='col-md-4'),
     ], className='row'),
 
-    dcc.Graph(figure={}, id='product_graph', config={"displayModeBar": False}),
-    dcc.Graph(figure={}, id='patient_graph', config={"displayModeBar": False}),
+    html.Div([
+        # First Graph in the same row
+        dcc.Graph(figure={}, id='sales_graph_anually', config={"displayModeBar": False}),
+        
+        # Second Graph in the same row
+        dcc.Graph(figure={}, id='sales_graph_quarterly', config={"displayModeBar": False}),
+    ], className='row'),
+
+    # Separate Row for other Graphs
+    html.Div([
+        dcc.Graph(figure={}, id='product_graph', config={"displayModeBar": False}),
+        dcc.Graph(figure={}, id='patient_graph', config={"displayModeBar": False}),
+    ], className='row'),
 ], className='container-fluid')
 
+
+
 @callback(
+    Output(component_id='sales_graph_anually', component_property='figure'),
+    Output(component_id='sales_graph_quarterly', component_property='figure'),
     Output(component_id='product_graph', component_property='figure'),
     Output(component_id='patient_graph', component_property='figure'),
     Input(component_id='region_selected', component_property='value'),
@@ -69,35 +139,46 @@ def update_graph(region_chosen, year_chosen, tenure_chosen):
         df = data_all_years
 
     df['Implant Date'] = pd.to_datetime(df['Implant Date'], format='%d/%m/%Y')
+    df = df[df['Implant Date'].dt.year != 2017]
+
+    fig1 = graph_total_sales_anually(count_total_sales_anually(df), region_chosen)
+    fig2 = graph_total_sales_quarterly(count_total_sales_quarterly(df), region_chosen)
+
+
     if year_chosen=="All Years":
         final_df = df[df['Implant Date'].dt.month.isin(tenures[tenure_chosen])]
     else:
         selected_year_df = df[df['Implant Date'].dt.year.isin([int(year_chosen)])]
         final_df = selected_year_df[selected_year_df['Implant Date'].dt.month.isin(tenures[tenure_chosen])]
 
-    key_product_frequency_df = pd.DataFrame({'Values': final_df["Key Product"].value_counts().index, 'Count': final_df["Key Product"].value_counts().values})
+    key_product_sales_df = pd.DataFrame({'Values': final_df["Key Product"].value_counts().index, 'Count': final_df["Key Product"].value_counts().values})
 
-    fig1 = px.bar(key_product_frequency_df,
+    fig3 = px.bar(key_product_sales_df,
                   x='Values',
                   y='Count',
                   title=f'Key Product Analysis {tenure_chosen} {year_chosen} {region_chosen}',
-                  labels={'Values': "Key Product", 'Count': 'Frequency'},
-                  text_auto=True)
+                  labels={'Values': "Key Product", 'Count': 'Sales'},
+                  text_auto=True,
+                  width=700)
+    
+    patient_type_sales_df = pd.DataFrame({'Values': final_df["Patient Type"].value_counts().index, 'Count': final_df["Patient Type"].value_counts().values})
 
-    patient_type_frequency_df = pd.DataFrame({'Values': final_df["Patient Type"].value_counts().index, 'Count': final_df["Patient Type"].value_counts().values})
-
-    fig2 = px.pie(patient_type_frequency_df,
+    fig4 = px.pie(patient_type_sales_df,
                   names='Values',
                   values='Count',
                   title=f'Patient Type Analysis {tenure_chosen} {year_chosen} {region_chosen}',
                   labels={'Values': "Key Product", 'Count': 'Frequency'},
+                  width=700,
                   hover_data=['Values'])
-        
-    fig1.update_layout(annotations=[dict(text="HAMMAD ALI", showarrow=False, x=1, y=1, font={"size": 50})])
-    fig2.update_layout(annotations=[dict(text="HAMMAD ALI", showarrow=False, x=0.5, y=0.5, font={"size": 50})])
+    
+    fig3.update_layout(annotations=[dict(text="HAMMAD ALI", showarrow=False, x=1, y=1, font={"size": 50})])
+    fig4.update_layout(annotations=[dict(text="HAMMAD ALI", showarrow=False, x=0.5, y=0.5, font={"size": 50})])
+    
 
-    fig = [fig1, fig2]
+
+
+    fig = [fig1, fig2, fig3, fig4]
     return fig
 
 if __name__ == '__main__':
-    app.run_server()
+    app.run_server(debug=True)
