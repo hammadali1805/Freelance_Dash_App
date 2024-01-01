@@ -49,8 +49,6 @@ def graph_total_sales_anually(data, region_chosen):
                   text_auto=True,
                   width=700)
     
-    fig.update_layout(annotations=[dict(text="HAMMAD ALI", showarrow=False, x=1, y=1, font={"size": 50})])
-
     return fig
 
 def count_total_sales_quarterly(df):
@@ -82,8 +80,6 @@ def graph_total_sales_quarterly(data, region_chosen):
                   text_auto=True,
                   width=700)
     
-    fig.update_layout(barmode="group", annotations=[dict(text="HAMMAD ALI", showarrow=False, x=1, y=1, font={"size": 50})])
-
     return fig
 
 # App layout using Bootstrap components
@@ -107,16 +103,16 @@ app.layout = html.Div([
 
     html.Div([
         # First Graph in the same row
-        dcc.Graph(figure={}, id='sales_graph_anually', config={"displayModeBar": False}),
+        dcc.Graph(figure={}, id='sales_graph_anually'),
         
         # Second Graph in the same row
-        dcc.Graph(figure={}, id='sales_graph_quarterly', config={"displayModeBar": False}),
+        dcc.Graph(figure={}, id='sales_graph_quarterly'),
     ], className='row'),
 
     # Separate Row for other Graphs
     html.Div([
-        dcc.Graph(figure={}, id='product_graph', config={"displayModeBar": False}),
-        dcc.Graph(figure={}, id='patient_graph', config={"displayModeBar": False}),
+        dcc.Graph(figure={}, id='product_graph'),
+        dcc.Graph(figure={}, id='patient_graph'),
     ], className='row'),
 ], className='container-fluid')
 
@@ -170,10 +166,6 @@ def update_graph(region_chosen, year_chosen, tenure_chosen):
                   labels={'Values': "Key Product", 'Count': 'Frequency'},
                   width=700,
                   hover_data=['Values'])
-    
-    fig3.update_layout(annotations=[dict(text="HAMMAD ALI", showarrow=False, x=1, y=1, font={"size": 50})])
-    fig4.update_layout(annotations=[dict(text="HAMMAD ALI", showarrow=False, x=0.5, y=0.5, font={"size": 50})])
-    
 
 
 
