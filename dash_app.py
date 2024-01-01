@@ -78,6 +78,7 @@ def graph_total_sales_quarterly(data, region_chosen):
                   category_orders={'Quarter': ["1", "2", "3", "4"]},
                   title=f'Key Product Quarterly Sales Analysis {region_chosen}',
                   text_auto=True,
+                  barmode="group",
                   width=700)
     
     return fig
